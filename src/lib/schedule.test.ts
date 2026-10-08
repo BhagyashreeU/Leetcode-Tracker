@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { addDays, daysBetween } from './dates'
+import { addDays, daysBetween, overdueLabel } from './dates'
 import { dueToday, scheduleAttempt, type ScheduleState } from './schedule'
 
 const at = (step: number, extra: Partial<ScheduleState> = {}): ScheduleState => ({
@@ -95,5 +95,14 @@ describe('dueToday', () => {
     const { shown, deferred } = dueToday(items, '2026-10-08', 10)
     expect(shown).toHaveLength(10)
     expect(deferred).toBe(2)
+  })
+})
+
+describe('overdueLabel', () => {
+  it('reads naturally for short and long gaps', () => {
+    expect(overdueLabel('2026-10-08', '2026-10-08')).toBe('Due today')
+    expect(overdueLabel('2026-10-07', '2026-10-08')).toBe('1 day overdue')
+    expect(overdueLabel('2026-10-01', '2026-10-08')).toBe('7 days overdue')
+    expect(overdueLabel('2026-09-01', '2026-10-08')).toBe('Overdue since Sep 1')
   })
 })

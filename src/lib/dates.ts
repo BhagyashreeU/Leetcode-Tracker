@@ -28,3 +28,21 @@ export function formatDay(day: string): string {
     timeZone: 'UTC',
   })
 }
+
+/** "Due today", "1 day overdue", "Overdue since Oct 1". */
+export function overdueLabel(nextReviewOn: string, today: string): string {
+  const days = daysBetween(nextReviewOn, today)
+  if (days <= 0) return 'Due today'
+  if (days === 1) return '1 day overdue'
+  if (days <= 14) return `${days} days overdue`
+  return `Overdue since ${formatDay(nextReviewOn)}`
+}
+
+export function formatLongDay(day: string): string {
+  return new Date(toUtc(day)).toLocaleDateString(undefined, {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+    timeZone: 'UTC',
+  })
+}

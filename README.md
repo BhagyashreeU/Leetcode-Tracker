@@ -5,10 +5,12 @@ schedule (1, 3, 7, 14 and 30 days). Design: [docs/design.md](docs/design.md).
 
 ## What works now
 
-- **Today**: problems due for review (overdue first), with Again / Hard / Good / Easy
-  buttons that show when each choice brings the problem back.
-- **Log**: paste a LeetCode URL, set difficulty and topics, rate how it felt, add notes.
-- **All problems**: filter by topic, difficulty and status; see next review dates; edit notes.
+- **Today**: problems due for review (overdue first) with a daily progress bar. Open the
+  problem on LeetCode, re-solve it, then rate it Again / Hard / Good / Easy (or press 1-4).
+  Each button says when the problem comes back. When you're caught up, it shows what's next.
+- **Log**: paste a LeetCode URL, rate how it felt, add notes. Time taken and a solution
+  link are optional. You stay on the page to log the next one.
+- **Problems**: search, filter by status, topic and difficulty, see next review dates, edit notes.
 
 Problem suggestions, reminders and deployment come next.
 

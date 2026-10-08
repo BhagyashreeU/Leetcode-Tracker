@@ -8,6 +8,10 @@ interface TrackerState {
   tracked: TrackedProblem[]
   due: TrackedProblem[]
   deferred: number
+  /** Reviews (not first solves) already done today. */
+  doneToday: number
+  /** The next few scheduled reviews after today, soonest first. */
+  upcoming: TrackedProblem[]
   today: string
   loading: boolean
   error: string | null
@@ -44,7 +48,12 @@ export function TrackerProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo(() => {
     const { shown, deferred } = dueToday(tracked, today, cap)
-    return { tracked, due: shown, deferred, today, loading, error, reload }
+    const doneToday = tracked.filter((t) => t.lastReviewedOn === today && t.timesReviewed > 0).length
+    const upcoming = tracked
+      .filter((t) => t.nextReviewOn !== null && t.nextReviewOn > today)
+      .sort((a, b) => a.nextReviewOn!.localeCompare(b.nextReviewOn!))
+      .slice(0, 5)
+    return { tracked, due: shown, deferred, doneToday, upcoming, today, loading, error, reload }
   }, [tracked, today, cap, loading, error, reload])
 
   useEffect(() => {
