@@ -6,7 +6,7 @@ Status: approved by B, 2026-10-08 (repo: yes, intervals 1/3/7/14/30: yes, email 
 
 - Log a problem you just solved and rate how hard it felt.
 - Show a **Due today** list of problems to re-solve, scheduled by spaced repetition.
-- Suggest new problems from a curated list (NeetCode 150), weighted toward your weak topics.
+- Suggest new problems from **Blind 75 first**, then the rest of **NeetCode 150**, weighted toward your weak topics.
 - Send a daily reminder when reviews are due.
 
 Single user to start (just B), but behind a login so the data is private and it can grow later.
