@@ -15,7 +15,7 @@ Problem suggestions, reminders and deployment come next.
 ## Run it locally
 
 ```sh
-npm install
+npm install   # needs Node.js 22.12 or newer
 npm run dev
 ```
 
