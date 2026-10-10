@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { DifficultyBadge, ErrorNote, Notice, RatingButtons } from '../components/ui'
 import { store } from '../data/store'
 import { useTracker } from '../data/TrackerContext'
@@ -16,8 +16,10 @@ const label = 'block text-sm font-medium text-slate-700'
 export function LogPage() {
   const { tracked, today, reload } = useTracker()
   const queryRef = useRef<HTMLInputElement>(null)
+  const [params] = useSearchParams()
 
-  const [query, setQuery] = useState('')
+  // "Log it" on a suggestion links here with ?problem=<slug>.
+  const [query, setQuery] = useState(() => params.get('problem') ?? '')
   const [matches, setMatches] = useState<Problem[]>([])
   const [existing, setExisting] = useState<Problem | null>(null)
 

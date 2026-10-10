@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { Suggestions } from '../components/Suggestions'
 import { DifficultyBadge, ErrorNote, Notice, RatingButtons, TopicTags } from '../components/ui'
 import { store } from '../data/store'
 import { useTracker } from '../data/TrackerContext'
@@ -46,6 +47,8 @@ export function TodayPage() {
           {deferred} more {deferred === 1 ? 'review moves' : 'reviews move'} to tomorrow to keep today manageable.
         </p>
       )}
+
+      <Suggestions />
     </section>
   )
 }
@@ -224,13 +227,7 @@ function CaughtUp() {
     <div className="space-y-4">
       <div className="rounded-2xl bg-white p-6 text-center ring-1 ring-slate-200">
         <p className="text-lg font-semibold text-slate-900">You're all caught up</p>
-        <p className="mt-1 text-sm text-slate-500">Nothing else is due today. Solve something new?</p>
-        <Link
-          to="/log"
-          className="mt-4 inline-flex rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700"
-        >
-          Log a problem
-        </Link>
+        <p className="mt-1 text-sm text-slate-500">Nothing else is due today. Try a new problem below.</p>
       </div>
       {upcoming.length > 0 && (
         <div>

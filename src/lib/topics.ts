@@ -21,6 +21,8 @@ export const TOPICS = [
   { id: 'bit-manipulation', label: 'Bit Manipulation' },
 ] as const
 
+export type TopicId = (typeof TOPICS)[number]['id']
+
 const labels = new Map<string, string>(TOPICS.map((t) => [t.id, t.label]))
 
 export function topicLabel(id: string): string {
