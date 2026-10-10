@@ -13,6 +13,33 @@ export interface Problem {
 
 export type NewProblem = Omit<Problem, 'id'>
 
+/** A problem from the curated lists (Blind 75, NeetCode 150). */
+export interface CuratedProblem extends Problem {
+  inBlind75: boolean
+  inNeetcode150: boolean
+  /** Position in the NeetCode roadmap, 1-based. */
+  listOrder: number
+}
+
+/** One logged attempt, first solve included. */
+export interface ReviewRecord {
+  problemId: string
+  rating: Rating
+  /** ISO timestamp. */
+  reviewedAt: string
+}
+
+/** A suggestion the user skipped; it drops to the back of its topic for a week. */
+export interface Skip {
+  problemId: string
+  skippedOn: string
+}
+
+export interface Settings {
+  dailyReviewCap: number
+  dailyNewTarget: number
+}
+
 export interface Progress extends ScheduleState {
   notes: string
   solutionUrl: string | null
@@ -42,5 +69,10 @@ export interface Store {
   /** Logs an attempt and reschedules the problem. Returns the new schedule. */
   recordAttempt(attempt: Attempt, today: string): Promise<Progress>
   updateNotes(problemId: string, notes: string, solutionUrl: string | null): Promise<void>
-  dailyReviewCap(): Promise<number>
+  settings(): Promise<Settings>
+  /** The curated lists in roadmap order. Empty until the seed has been loaded. */
+  listCurated(): Promise<CuratedProblem[]>
+  listReviews(): Promise<ReviewRecord[]>
+  listSkips(): Promise<Skip[]>
+  skipSuggestion(problemId: string, today: string): Promise<void>
 }

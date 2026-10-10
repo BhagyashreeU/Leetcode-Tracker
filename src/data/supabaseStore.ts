@@ -1,6 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { DEFAULT_DAILY_REVIEW_CAP, scheduleAttempt } from '../lib/schedule'
-import type { Attempt, NewProblem, Problem, Progress, Store, TrackedProblem } from './types'
+import { DEFAULT_DAILY_NEW_TARGET } from '../lib/suggest'
+import type { Attempt, CuratedProblem, NewProblem, Problem, Progress, ReviewRecord, Store, TrackedProblem } from './types'
 
 interface ProblemRow {
   id: string
@@ -45,9 +46,27 @@ const toProgress = (r: UserProblemRow): Progress => ({
   solutionUrl: r.solution_url,
 })
 
+interface CuratedRow extends ProblemRow {
+  in_blind75: boolean
+  in_neetcode150: boolean
+  list_order: number
+}
+
 function check<T>({ data, error }: { data: T; error: { message: string } | null }): T {
   if (error) throw new Error(error.message)
   return data
+}
+
+// PostgREST returns at most 1000 rows per request, so page through bigger tables.
+const PAGE = 1000
+
+async function fetchAll<T>(page: (from: number, to: number) => PromiseLike<{ data: T[] | null; error: { message: string } | null }>) {
+  const all: T[] = []
+  for (let from = 0; ; from += PAGE) {
+    const rows = check(await page(from, from + PAGE - 1)) ?? []
+    all.push(...rows)
+    if (rows.length < PAGE) return all
+  }
 }
 
 export function createSupabaseStore(db: SupabaseClient): Store {
@@ -133,9 +152,53 @@ export function createSupabaseStore(db: SupabaseClient): Store {
       check(await db.from('user_problems').update({ notes, solution_url: solutionUrl }).eq('problem_id', problemId))
     },
 
-    async dailyReviewCap() {
-      const row = check(await db.from('settings').select('daily_review_cap').maybeSingle()) as { daily_review_cap: number } | null
-      return row?.daily_review_cap ?? DEFAULT_DAILY_REVIEW_CAP
+    async settings() {
+      const row = check(await db.from('settings').select('daily_review_cap, daily_new_target').maybeSingle()) as {
+        daily_review_cap: number
+        daily_new_target: number
+      } | null
+      return {
+        dailyReviewCap: row?.daily_review_cap ?? DEFAULT_DAILY_REVIEW_CAP,
+        dailyNewTarget: row?.daily_new_target ?? DEFAULT_DAILY_NEW_TARGET,
+      }
+    },
+
+    async listCurated() {
+      const rows = check(
+        await db
+          .from('problems')
+          .select(`${PROBLEM_COLUMNS}, in_blind75, in_neetcode150, list_order`)
+          .or('in_blind75.eq.true,in_neetcode150.eq.true')
+          .order('list_order'),
+      ) as CuratedRow[]
+      return rows.map(
+        (r): CuratedProblem => ({
+          ...toProblem(r),
+          inBlind75: r.in_blind75,
+          inNeetcode150: r.in_neetcode150,
+          listOrder: r.list_order,
+        }),
+      )
+    },
+
+    async listReviews() {
+      const rows = await fetchAll<{ problem_id: string; rating: ReviewRecord['rating']; reviewed_at: string }>((from, to) =>
+        db.from('reviews').select('problem_id, rating, reviewed_at').order('reviewed_at').order('id').range(from, to),
+      )
+      return rows.map((r) => ({ problemId: r.problem_id, rating: r.rating, reviewedAt: r.reviewed_at }))
+    },
+
+    async listSkips() {
+      const rows = check(await db.from('suggestion_skips').select('problem_id, skipped_on')) as {
+        problem_id: string
+        skipped_on: string
+      }[]
+      return rows.map((r) => ({ problemId: r.problem_id, skippedOn: r.skipped_on }))
+    },
+
+    async skipSuggestion(problemId, today) {
+      const uid = await userId()
+      check(await db.from('suggestion_skips').upsert({ user_id: uid, problem_id: problemId, skipped_on: today }))
     },
   }
 }

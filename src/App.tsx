@@ -4,6 +4,7 @@ import { signOut, store } from './data/store'
 import { TrackerProvider, useTracker } from './data/TrackerContext'
 import { LogPage } from './pages/LogPage'
 import { ProblemsPage } from './pages/ProblemsPage'
+import { ProgressPage } from './pages/ProgressPage'
 import { TodayPage } from './pages/TodayPage'
 
 export default function App() {
@@ -42,6 +43,9 @@ function Shell() {
           <NavLink to="/problems" className={tab}>
             Problems
           </NavLink>
+          <NavLink to="/progress" className={tab}>
+            Progress
+          </NavLink>
           <span className="ml-auto flex items-center gap-3">
             {!store.isDemo && (
               <button onClick={signOut} className="text-sm text-slate-500 hover:text-slate-900">
@@ -62,6 +66,7 @@ function Shell() {
           <Route path="/" element={<TodayPage />} />
           <Route path="/log" element={<LogPage />} />
           <Route path="/problems" element={<ProblemsPage />} />
+          <Route path="/progress" element={<ProgressPage />} />
         </Routes>
       </main>
     </div>
