@@ -108,9 +108,9 @@ The Due today list always comes first; new suggestions appear below it, and the 
 
 ## 5. Reminders
 
-- **Daily email**: a scheduled job runs every hour, finds users whose reminder hour it is in their time zone and who have reviews due, and sends one email: "4 reviews due, 2 new suggestions," with links. No email when nothing is due. Sent through Resend (free tier, 100 emails a day).
+- **Daily email**: a scheduled job runs every 30 minutes, finds users whose reminder hour it is in their time zone and who have reviews due, and sends one email: "4 reviews due, 2 new suggestions," with links. No email when nothing is due. Sent through Resend (free tier, 100 emails a day).
 - **In-app**: a count badge on Due today, and the browser tab title shows the count.
-- **Browser push** (every version, B's choice): the app is an installable web app (PWA) with a service worker. The same hourly job sends a web push notification alongside the email, using VAPID keys and a `push_subscriptions` table (one row per browser or phone). On iPhone, push only works after "Add to Home Screen" (iOS 16.4+); on desktop and Android it works in the browser.
+- **Browser push** (every version, B's choice): the app is an installable web app (PWA) with a service worker. The same job sends a web push notification alongside the email, using VAPID keys and a `push_subscriptions` table (one row per browser or phone). On iPhone, push only works after "Add to Home Screen" (iOS 16.4+); on desktop and Android it works in the browser.
 - B can turn email and push on or off separately in Settings.
 
 ## 6. Stack (chosen by B)
@@ -119,7 +119,7 @@ The Due today list always comes first; new suggestions appear below it, and the 
 |---|---|---|
 | Frontend | React + Vite + TypeScript, Tailwind CSS, installable PWA (`vite-plugin-pwa`) | Simple, fast to build, widely known |
 | Database + login | Supabase (Postgres, Auth, row-level security) | Free tier covers this easily; login with email magic link or Google |
-| Scheduled job | Supabase Edge Function triggered hourly by `pg_cron` | Runs inside the same free project, no extra server |
+| Scheduled job | Supabase Edge Function triggered every 30 minutes by `pg_cron` | Runs inside the same free project, no extra server |
 | Email | Resend (free tier, 100 emails a day) | Simple API, works from an Edge Function |
 | Push | Web Push (VAPID) sent from the Edge Function | Free, no third-party push service |
 | Hosting | Vercel (free Hobby plan) | Push to GitHub and it deploys; preview link for every change |

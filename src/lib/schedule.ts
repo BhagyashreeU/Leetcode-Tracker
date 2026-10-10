@@ -1,6 +1,6 @@
 // Spaced-repetition rules from docs/design.md, section 3. This is the single
 // source of truth for scheduling; the reminder job will import it too.
-import { addDays } from './dates'
+import { addDays } from './dates.ts'
 
 export const INTERVALS = [1, 3, 7, 14, 30] as const
 export const MAX_STEP = INTERVALS.length - 1

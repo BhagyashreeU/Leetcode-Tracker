@@ -96,6 +96,10 @@ export function TrackerProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     document.title = value.due.length ? `(${value.due.length}) LeetCode Tracker` : 'LeetCode Tracker'
+    // The count on the installed app's icon, where supported.
+    if ('setAppBadge' in navigator) {
+      void (value.due.length ? navigator.setAppBadge(value.due.length) : navigator.clearAppBadge()).catch(() => {})
+    }
   }, [value.due.length])
 
   return <TrackerContext.Provider value={value}>{children}</TrackerContext.Provider>
