@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Reminder secrets made by npm run setup-reminders
+supabase/reminders.env
+supabase/reminders-cron.sql
+supabase/.temp

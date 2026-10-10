@@ -12,6 +12,7 @@
     "lint": "oxlint",
     "preview": "vite preview",
     "seed": "vitest run -u src/lib/seed.test.ts",
+    "setup-reminders": "node scripts/setup-reminders.mjs",
     "test": "vitest run",
     "typecheck": "tsc -b"
   },
