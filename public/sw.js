@@ -17,7 +17,10 @@ self.addEventListener('push', (event) => {
       body: data.body || 'You have reviews due today.',
       icon: '/icon-192.png',
       badge: '/icon-192.png',
+      // One reminder at a time, but a new one still alerts when an older
+      // one (or a test) is still in the notification list.
       tag: 'reviews-due',
+      renotify: true,
       data: { url: data.url || '/' },
     }),
   )
